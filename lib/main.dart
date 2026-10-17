@@ -155,6 +155,7 @@ void _lamLai() {
             children: [
               TextFormField(
                 controller: _hoTenCtrl,
+                maxLength: 50,
                 textInputAction: TextInputAction.next,
                 decoration: const InputDecoration(
                   labelText: 'Họ và tên *',
