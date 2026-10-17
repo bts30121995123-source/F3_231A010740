@@ -77,40 +77,55 @@ class _RegisterPageState extends State<RegisterPage> {
     return null;
   }
 
-  void _dangKy() {
-    // 1) Kiểm tra các trường của Form
-    final hopLe = _formKey.currentState!.validate();
-    // 2) Kiểm tra các thành phần nằm ngoài Form
-    if (_buoiDaChon.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hãy chọn ít nhất một buổi học')),
-      );
-      return;
-    }
-    if (!hopLe) return;
+void _dangKy() {
+// 1) Kiểm tra các trường của Form
+final hopLe = _formKey.currentState!.validate();
 
-    showDialog<void>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Xác nhận đăng ký'),
-        content: Text(
-          'Họ tên: ${_hoTenCtrl.text.trim()}\n'
-          'MSSV: ${_mssvCtrl.text.trim()}\n'
-          'Email: ${_emailCtrl.text.trim()}\n'
-          'Học phần: $_monHoc\n'
-          'Hệ đào tạo: $_heDaoTao\n'
-          'Buổi học: ${(_buoiDaChon.toList()..sort()).join(", ")}\n'
-          'Số tín chỉ: ${_soTinChi.round()}\n'
-          'Nhận thông báo: ${_nhanThongBao ? "Có" : "Không"}',
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Đóng')),
-        ],
-      ),
-    );
-  }
+// 2) Kiểm tra các thành phần nằm ngoài Form
+if (_buoiDaChon.isEmpty) {
+ScaffoldMessenger.of(context).showSnackBar(
+const SnackBar(content: Text('Hãy chọn ít nhất một buổi học')),
+);
+return;
+}
+if (!hopLe) return;
 
-  void _lamLai() {
+// NC2: Hệ Vừa làm vừa học bắt buộc chọn buổi Tối
+if (_heDaoTao == 'Vừa làm vừa học' &&
+!_buoiDaChon.contains('Tối')) {
+ScaffoldMessenger.of(context).showSnackBar(
+const SnackBar(
+content: Text('Hệ Vừa làm vừa học bắt buộc chọn buổi Tối'),
+),
+);
+return;
+}
+
+showDialog<void>(
+context: context,
+builder: (context) => AlertDialog(
+title: const Text('Xác nhận đăng ký'),
+content: Text(
+'Họ tên: ${_hoTenCtrl.text.trim()}\n'
+'MSSV: ${_mssvCtrl.text.trim()}\n'
+'Email: ${_emailCtrl.text.trim()}\n'
+'Học phần: $_monHoc\n'
+'Hệ đào tạo: $_heDaoTao\n'
+'Buổi học: ${(_buoiDaChon.toList()..sort()).join(", ")}\n'
+'Số tín chỉ: ${_soTinChi.round()}\n'
+'Nhận thông báo: ${_nhanThongBao ? "Có" : "Không"}',
+),
+actions: [
+TextButton(
+onPressed: () => Navigator.pop(context),
+child: const Text('Đóng'),
+),
+],
+),
+);
+}
+
+void _lamLai() {
     _formKey.currentState!.reset(); // xóa nội dung và thông báo lỗi của các trường trong Form
     _hoTenCtrl.clear();
     _mssvCtrl.clear();
